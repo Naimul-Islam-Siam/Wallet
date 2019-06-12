@@ -37,8 +37,20 @@ var UIcontroller = (function () {
 //Global Controller
 var controller = (function (budgetCtrl, UIctrl) {
 
-    //access "DOMstrings of UIctrl" and store in "DOM of global ctrl"
-    var DOM = UIctrl.getDOMstrings();
+    var setupEventListener = function () {
+
+        var DOM = UIctrl.getDOMstrings(); //access "DOMstrings of UIctrl" and store in "DOM of global ctrl"
+
+        //for "click button"
+        document.querySelector(DOM.inputBtn).addEventListener("click", ctrlAddItem);
+
+        //for "Enter key"
+        document.addEventListener("keypress", function (event) {
+            if (event.keyCode === 13) {
+                ctrlAddItem();
+            }
+        });
+    };
 
     var ctrlAddItem = function () {
 
@@ -56,12 +68,14 @@ var controller = (function (budgetCtrl, UIctrl) {
         //5. Display the budget
     };
 
-    document.querySelector(DOM.inputBtn).addEventListener("click", ctrlAddItem);
-
-    document.addEventListener("keypress", function (event) {
-        if (event.keyCode === 13) {
-            ctrlAddItem();
+    return {
+        //codes that we wanna be executed right when the application is started, will be stored in "init"
+        init: function () {
+            console.log("Application has started.");
+            setupEventListener();
         }
-    });
+    }
 
 })(budgetController, UIcontroller);
+
+controller.init();
