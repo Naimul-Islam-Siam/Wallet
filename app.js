@@ -1,4 +1,4 @@
-//Budget Controller
+// #Budget Controller
 var budgetController = (function () {
 
     var Income = function (id, description, value) {
@@ -25,12 +25,36 @@ var budgetController = (function () {
             exp: 0  //total expense
         }
 
-    }
+    };
+
+    return {
+        addItem: function (type, description, value) {
+            var newItem, ID;
+
+            if (data.allItems[type].length > 0) {
+                ID = data.allItems[type][data.allItems[type].length - 1].id + 1;
+            } else {
+                ID = 0;
+            }
+
+            if (type === "inc") {
+                newItem = new Income(ID, description, value);
+            } else if (type === "exp") {
+                newItem = new Expense(ID, description, value);
+            }
+
+            data.allItems[type].push(newItem);
+
+            return newItem;
+        }
+    };
 })();
 
 
 
-//UI Controller
+
+
+// #UI Controller
 var UIcontroller = (function () {
 
     //store the html class and id names //private
@@ -38,7 +62,9 @@ var UIcontroller = (function () {
         inputType: ".add__type",
         inputDescription: ".add__description",
         inputValue: ".add__value",
-        inputBtn: ".add__btn"
+        inputBtn: ".add__btn",
+        incomesContainer: ".income__list",
+        expensesContainer: ".expenses__list"
     };
 
     return {
@@ -50,6 +76,44 @@ var UIcontroller = (function () {
             };
         },
 
+        addListItem: function (object, type) {
+            var boilerHtml, displayHtml, container;
+
+            //Create Html Strings with placeholder texts
+            if (type === "inc") {
+                container = DOMstrings.incomesContainer;
+
+                boilerHtml = '<div class="item clearfix" id="income-%id%"> <div class="item__description"> %description% </div> <div class="right clearfix"> <div class="item__value"> %value% </div> <div class="item__delete"> <button class="item__delete--btn"> <i class="ion-ios-close-outline"> </i> </button> </div> </div> </div>'
+            } else if (type === "exp") {
+                container = DOMstrings.expensesContainer;
+
+                boilerHtml = '<div class="item clearfix" id="expense-%id%"> <div class="item__description"> %description% </div> <div class="right clearfix"> <div class="item__value"> %value% </div> <div class="item__percentage">21%</div> <div class="item__delete"> <button class="item__delete--btn"> <i class="ion-ios-close-outline"> </i> </button> </div> </div> </div >'
+            }
+
+            //Replace placeholders with actual data
+            displayHtml = boilerHtml.replace('%id', object.id);
+            displayHtml = displayHtml.replace('%description%', object.description);
+            displayHtml = displayHtml.replace('%value%', object.value);
+
+            //Insert them in DOM
+            document.querySelector(container).insertAdjacentHTML("beforeend", displayHtml);
+
+        },
+
+        clearFields: function () {
+            var fields, fieldsArr;
+
+            fields = document.querySelectorAll(DOMstrings.inputDescription + ", " + DOMstrings.inputValue);
+
+            fieldsArr = Array.prototype.slice.call(fields); //convert "fields" to an array
+
+            fieldsArr.forEach(function (current, index, array) {
+                current.value = ""; //empty the fields
+            });
+
+            fieldsArr[0].focus();   //select "inputDescription" (which is the first element of "fieldsArr" array) and put the focus back there
+        },
+
         //to make "DOMstrings" public
         getDOMstrings: function () {
             return DOMstrings;
@@ -59,8 +123,10 @@ var UIcontroller = (function () {
 
 
 
-//Global Controller
-var controller = (function (budgetCtrl, UIctrl) {
+
+
+// #Global Controller
+var appController = (function (budgetCtrl, UIctrl) {
 
     var setupEventListener = function () {
 
@@ -81,12 +147,16 @@ var controller = (function (budgetCtrl, UIctrl) {
 
         //1. Get the filled input data
         var input = UIcontroller.getInput();
-        console.log(input);
-        console.log("-----");
 
         //2. Add the item to the budget controller
+        var newItem = budgetCtrl.addItem(input.type, input.description, input.value);
+        console.log(newItem);
 
-        //3. Add the item to the UI controller
+        //3. Add the item to the UI
+        UIctrl.addListItem(newItem, input.type);
+
+        //Clear fields
+        UIctrl.clearFields();
 
         //4. Calculate the budget
 
@@ -103,4 +173,4 @@ var controller = (function (budgetCtrl, UIctrl) {
 
 })(budgetController, UIcontroller);
 
-controller.init();
+appController.init();
