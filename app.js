@@ -61,6 +61,18 @@ var budgetController = (function () {
             return newItem;
         },
 
+        deleteItem: function (type, id) {
+            var ids = data.allItems[type].map(function (current) {
+                return current.id;
+            });
+
+            var index = ids.indexOf(id);
+
+            if (index !== -1) {
+                data.allItems[type].splice(index, 1);
+            }
+        },
+
         calculateBudget: function () {
 
             //Calculate total incomes and expenses
@@ -86,6 +98,10 @@ var budgetController = (function () {
                 totalExp: data.totals.exp,
                 percentage: data.percentage
             };
+        },
+
+        testing: function () {
+            console.log(data);
         }
     };
 })();
@@ -108,7 +124,8 @@ var UIcontroller = (function () {
         budgetLabelValue: ".budget__value",
         budgetLabelInc: ".budget__income--value",
         budgetLabelExp: ".budget__expenses--value",
-        budgetLabelPercent: ".budget__expenses--percentage"
+        budgetLabelPercent: ".budget__expenses--percentage",
+        container: ".container"
     };
 
     return {
@@ -127,15 +144,15 @@ var UIcontroller = (function () {
             if (type === "inc") {
                 container = DOMstrings.incomesContainer;
 
-                boilerHtml = '<div class="item clearfix" id="income-%id%"> <div class="item__description"> %description% </div> <div class="right clearfix"> <div class="item__value"> %value% </div> <div class="item__delete"> <button class="item__delete--btn"> <i class="ion-ios-close-outline"> </i> </button> </div> </div> </div>'
+                boilerHtml = '<div class="item clearfix" id="inc-%id%"> <div class="item__description"> %description% </div> <div class="right clearfix"> <div class="item__value"> %value% </div> <div class="item__delete"> <button class="item__delete--btn"> <i class="ion-ios-close-outline"> </i> </button> </div> </div> </div>'
             } else if (type === "exp") {
                 container = DOMstrings.expensesContainer;
 
-                boilerHtml = '<div class="item clearfix" id="expense-%id%"> <div class="item__description"> %description% </div> <div class="right clearfix"> <div class="item__value"> %value% </div> <div class="item__percentage">21%</div> <div class="item__delete"> <button class="item__delete--btn"> <i class="ion-ios-close-outline"> </i> </button> </div> </div> </div >'
+                boilerHtml = '<div class="item clearfix" id="exp-%id%"> <div class="item__description"> %description% </div> <div class="right clearfix"> <div class="item__value"> %value% </div> <div class="item__percentage">21%</div> <div class="item__delete"> <button class="item__delete--btn"> <i class="ion-ios-close-outline"> </i> </button> </div> </div> </div >'
             }
 
             //Replace placeholders with actual data
-            displayHtml = boilerHtml.replace('%id', object.id);
+            displayHtml = boilerHtml.replace('%id%', object.id);
             displayHtml = displayHtml.replace('%description%', object.description);
             displayHtml = displayHtml.replace('%value%', object.value);
 
@@ -197,6 +214,8 @@ var appController = (function (budgetCtrl, UIctrl) {
                 ctrlAddItem();
             }
         });
+
+        document.querySelector(DOM.container).addEventListener("click", ctrlDeleteItem);
     };
 
     var updateBudget = function () {
@@ -233,12 +252,34 @@ var appController = (function (budgetCtrl, UIctrl) {
 
     };
 
+    var ctrlDeleteItem = function (event) {
+
+        var itemID, splitID, type, ID;
+
+        itemID = event.target.parentNode.parentNode.parentNode.parentNode.id;
+
+        if (itemID) {
+            splitID = itemID.split("-");
+            type = splitID[0];
+            ID = parseInt(splitID[1]);
+
+            //Delete item from the data structure
+            budgetCtrl.deleteItem(type, ID);
+
+            //Delete item from the UI
+
+            //Update and show new budget
+        }
+
+    };
+
     return {
         //codes that we wanna be executed right when the application is started, will be stored in "init"
         init: function () {
             console.log("Application has started.");
             setupEventListener();
 
+            //works as reset / resetting every thing to 0 at the start
             UIctrl.displayBudget({
                 budget: 0,
                 totalInc: 0,
