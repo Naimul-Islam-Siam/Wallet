@@ -154,6 +154,22 @@ var UIcontroller = (function () {
         monthLabel: ".budget__title--month"
     };
 
+    var formatNumber = function (number, type) {
+        number = Math.abs(number); //will ignore the sign of the number and convert it to just number. Bit like modulus
+        number = number.toFixed(2); //number of digits after the "."
+
+        var numberSplit = number.split(".");
+
+        var int = numberSplit[0];
+        var float = numberSplit[1];
+
+        if (int.length > 3) {
+            int = int.substr(0, int.length - 3) + "," + int.substr(int.length - 3, 3);
+        }
+
+        return (type === "exp" ? "-" : "+") + " " + int + "." + float;
+    };
+
     return {
         getInput: function () {
             return {
@@ -180,7 +196,7 @@ var UIcontroller = (function () {
             //Replace placeholders with actual data
             displayHtml = boilerHtml.replace('%id%', object.id);
             displayHtml = displayHtml.replace('%description%', object.description);
-            displayHtml = displayHtml.replace('%value%', object.value);
+            displayHtml = displayHtml.replace('%value%', formatNumber(object.value, type));
 
             //Insert them in DOM
             document.querySelector(container).insertAdjacentHTML("beforeend", displayHtml);
@@ -207,9 +223,13 @@ var UIcontroller = (function () {
         },
 
         displayBudget: function (object) {
-            document.querySelector(DOMstrings.budgetLabelValue).textContent = object.budget;
-            document.querySelector(DOMstrings.budgetLabelInc).textContent = object.totalInc;
-            document.querySelector(DOMstrings.budgetLabelExp).textContent = object.totalExp;
+
+            var type;
+            object.budget > 0 ? type === "inc" : "exp";
+
+            document.querySelector(DOMstrings.budgetLabelValue).textContent = formatNumber(object.budget, type);
+            document.querySelector(DOMstrings.budgetLabelInc).textContent = formatNumber(object.totalInc, "inc");
+            document.querySelector(DOMstrings.budgetLabelExp).textContent = formatNumber(object.totalExp, "exp");
 
             if (object.percentage > 0) {
                 document.querySelector(DOMstrings.budgetLabelPercent).textContent = object.percentage + "%";
