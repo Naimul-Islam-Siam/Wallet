@@ -125,11 +125,8 @@ var budgetController = (function () {
                 totalExp: data.totals.exp,
                 percentage: data.percentage
             };
-        },
-
-        testing: function () {
-            console.log(data);
         }
+
     };
 })();
 
