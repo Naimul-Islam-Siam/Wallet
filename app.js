@@ -154,6 +154,7 @@ var UIcontroller = (function () {
         monthLabel: ".budget__title--month"
     };
 
+    //as the function is likely to be used only in UIcontroller, it's kept private instead of being public 
     var formatNumber = function (number, type) {
         number = Math.abs(number); //will ignore the sign of the number and convert it to just number. Bit like modulus
         number = number.toFixed(2); //number of digits after the "."
@@ -168,6 +169,12 @@ var UIcontroller = (function () {
         }
 
         return (type === "exp" ? "-" : "+") + " " + int + "." + float;
+    };
+
+    var nodeListForEach = function (nodeList, callbackFn) {
+        for (var i = 0; i < nodeList.length; i++) {
+            callbackFn(nodeList[i], i);
+        }
     };
 
     return {
@@ -242,12 +249,6 @@ var UIcontroller = (function () {
 
             var el = document.querySelectorAll(DOMstrings.percentageLabel);
 
-            var nodeListForEach = function (nodeList, callbackFn) {
-                for (var i = 0; i < nodeList.length; i++) {
-                    callbackFn(nodeList[i], i);
-                }
-            };
-
             nodeListForEach(el, function (current, index) {
 
                 if (percentages[index] > 0) {
@@ -267,6 +268,16 @@ var UIcontroller = (function () {
             var year = now.getFullYear();
 
             document.querySelector(DOMstrings.monthLabel).textContent = months[month] + " " + year;
+        },
+
+        changedType: function () {
+            var fields = document.querySelectorAll(DOMstrings.inputType + ", " + DOMstrings.inputDescription + ", " + DOMstrings.inputValue);
+
+            nodeListForEach(fields, function (current) {
+                current.classList.toggle("red-focus");
+            });
+
+            document.querySelector(DOMstrings.inputBtn).classList.toggle("red");
         },
 
         //to make "DOMstrings" public
@@ -298,6 +309,8 @@ var appController = (function (budgetCtrl, UIctrl) {
         });
 
         document.querySelector(DOM.container).addEventListener("click", ctrlDeleteItem);
+
+        document.querySelector(DOM.inputType).addEventListener("change", UIctrl.changedType);
     };
 
     var updateBudget = function () {
