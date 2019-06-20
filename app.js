@@ -193,11 +193,11 @@ var UIcontroller = (function () {
             if (type === "inc") {
                 container = DOMstrings.incomesContainer;
 
-                boilerHtml = '<div class="item clearfix" id="inc-%id%"> <div class="item__description"> %description% </div> <div class="right clearfix"> <div class="item__value"> %value% </div> <div class="item__delete"> <button class="item__delete--btn"> <i class="ion-ios-close-outline"> </i> </button> </div> </div> </div>'
+                boilerHtml = '<div class="item clearfix" id="inc-%id%"> <div class="item__description"> %description% </div> <div class="right clearfix"> <div class="item__value"> %value% </div> <div class="item__delete"> <button class="item__delete--btn"> <i class="icon ion-ios-close-circle-outline"></i> </button> </div> </div> </div>'
             } else if (type === "exp") {
                 container = DOMstrings.expensesContainer;
 
-                boilerHtml = '<div class="item clearfix" id="exp-%id%"> <div class="item__description"> %description% </div> <div class="right clearfix"> <div class="item__value"> %value% </div> <div class="item__percentage">21%</div> <div class="item__delete"> <button class="item__delete--btn"> <i class="ion-ios-close-outline"> </i> </button> </div> </div> </div >'
+                boilerHtml = '<div class="item clearfix" id="exp-%id%"> <div class="item__description"> %description% </div> <div class="right clearfix"> <div class="item__value"> %value% </div> <div class="item__percentage">21%</div> <div class="item__delete"> <button class="item__delete--btn"> <i class="icon ion-ios-close-circle-outline"></i> </button> </div> </div> </div >'
             }
 
             //Replace placeholders with actual data
