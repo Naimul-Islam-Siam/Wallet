@@ -232,7 +232,12 @@ var UIcontroller = (function () {
         displayBudget: function (object) {
 
             var type;
-            object.budget > 0 ? type === "inc" : "exp";
+
+            if (object.budget >= 0) {
+                type = "inc";
+            } else {
+                type = "exp";
+            }
 
             document.querySelector(DOMstrings.budgetLabelValue).textContent = formatNumber(object.budget, type);
             document.querySelector(DOMstrings.budgetLabelInc).textContent = formatNumber(object.totalInc, "inc");
