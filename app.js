@@ -233,11 +233,7 @@ var UIcontroller = (function () {
 
             var type;
 
-            if (object.budget >= 0) {
-                type = "inc";
-            } else {
-                type = "exp";
-            }
+            type = object.budget >= 0 ? "inc" : "exp";
 
             document.querySelector(DOMstrings.budgetLabelValue).textContent = formatNumber(object.budget, type);
             document.querySelector(DOMstrings.budgetLabelInc).textContent = formatNumber(object.totalInc, "inc");
